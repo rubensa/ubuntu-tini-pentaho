@@ -26,9 +26,6 @@ RUN apt-get update \
     # Install needed libraries
     && apt-get update && apt-get -y install libwebkit2gtk-4.0 2>&1 \
     #
-    # Avoid problems with GTK version detection
-    && printf "\nexport SWT_GTK3=1\n" >> /home/${USER_NAME}/.bashrc \
-    #
     # Download MySQL Driver
     && curl -o mysql-connector-java.tar.gz -sSL https://cdn.mysql.com/Downloads/Connector-J/mysql-connector-java-${MYSQL_VERSION}.tar.gz \
     && tar xvfz mysql-connector-java.tar.gz --directory /tmp \
@@ -37,6 +34,8 @@ RUN apt-get update \
     # Install PDI
     && curl -o pdi-ce.zip -sSL https://netcologne.dl.sourceforge.net/project/pentaho/Pentaho%20${PENTAHO_VERSION}/client-tools/pdi-ce-${PDI_VERSION}.zip \
     && unzip pdi-ce.zip -d /opt \
+    # Fix GTK 3 issues with SWT
+    && sed -i 's/SWT_GTK3=0/SWT_GTK3=1/' /opt/data-integration/spoon.sh \
     && rm pdi-ce.zip \
     #
     # Add MySQL driver
